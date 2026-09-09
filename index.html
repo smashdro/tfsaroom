@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TFSA Contribution Room - Option 4 Growth</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Nunito+Sans:wght@400;600;700&display=swap');
+
+  :root {
+    --ink: #0d2b3e;
+    --paper: #ffffff;
+    --sky: #eaf3f6;
+    --teal: #0f7a6b;
+    --teal-light: #2fa38f;
+    --rule: rgba(13,43,62,0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #dcedf0 0%, #f3f8f6 100%);
+    color: var(--ink);
+    font-family: 'Nunito Sans', system-ui, sans-serif;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 56px 20px 90px;
+  }
+
+  .book { width: 100%; max-width: 600px; }
+
+  .letterhead { padding: 0 8px 24px; text-align: left; }
+
+  .letterhead .mark {
+    width: 40px; height: 40px;
+    background: var(--teal);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    margin-bottom: 18px;
+  }
+
+  .letterhead h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(28px, 5.5vw, 36px);
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+
+  .letterhead p {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: #3f5a68;
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  .ledger {
+    background: var(--paper);
+    border-radius: 20px;
+    box-shadow: 0 24px 50px -18px rgba(13,43,62,0.22);
+    overflow: hidden;
+  }
+
+  .ledger-inner { padding: 34px 34px 6px; }
+
+  @media (max-width: 480px) { .ledger-inner { padding: 26px 22px 6px; } .letterhead { padding: 0 2px 22px; } }
+
+  .field {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .field label { font-size: 15.5px; font-weight: 700; color: var(--ink); }
+
+  .field .hint { display: block; font-size: 12px; color: #5f7a87; margin-top: 4px; font-weight: 400; }
+
+  .age-input-wrap { display: flex; align-items: baseline; gap: 6px; flex-shrink: 0; }
+
+  input#age, input#residencyYear {
+    width: 84px;
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 600;
+    text-align: right;
+    background: var(--sky);
+    border: none;
+    border-radius: 10px;
+    color: var(--ink);
+    padding: 10px 12px;
+    outline: none;
+    min-height: 44px;
+  }
+
+  input#age:focus, input#residencyYear:focus { box-shadow: 0 0 0 2px var(--teal-light); }
+
+  .age-input-wrap span { font-size: 13px; color: #5f7a87; }
+
+  .toggle-row { display: flex; align-items: flex-start; gap: 12px; padding-bottom: 26px; margin-bottom: 4px; }
+
+  .toggle-row input[type="checkbox"] { margin-top: 3px; width: 20px; height: 20px; accent-color: var(--teal); flex-shrink: 0; }
+
+  .toggle-row label { font-size: 13.5px; line-height: 1.55; color: #3f5a68; }
+
+  .result {
+    background: linear-gradient(135deg, var(--teal) 0%, #0a5c50 100%);
+    color: #fff;
+    padding: 30px 34px 34px;
+  }
+
+  @media (max-width: 480px) { .result { padding: 26px 22px 30px; } }
+
+  .result .total-label { font-size: 12.5px; color: #b7ded4; margin: 0 0 6px; }
+
+  .result .total {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(38px, 9vw, 56px);
+    font-weight: 600;
+    line-height: 1;
+    margin: 0;
+    color: #fff;
+  }
+
+  .result .total .cents { font-size: 0.4em; color: #b7ded4; }
+
+  .result .note {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #d3ece5;
+    margin: 16px 0 0;
+    max-width: 46ch;
+  }
+
+  .breakdown-toggle {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 22px;
+    font-size: 13px;
+    color: #fff;
+    cursor: pointer;
+    padding: 12px 18px;
+    margin-top: 18px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    min-height: 44px;
+  }
+
+  .breakdown {
+    display: none;
+    margin-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 16px;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .breakdown.open { display: block; }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 5px 0;
+    color: #e3f3ee;
+  }
+
+  .breakdown-row .yr { color: #a9d6cb; }
+
+  .footnote {
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: #5f7a87;
+    padding: 18px 34px 26px;
+    background: #f4faf8;
+  }
+
+  @media (max-width: 480px) { .footnote { padding: 16px 22px 24px; } }
+</style>
+</head>
+<body>
+
+<div class="book">
+  <div class="letterhead">
+    <div class="mark">$</div>
+    <h1>What's your lifetime TFSA room?</h1>
+    <p>Enter your age to see the maximum you could have contributed to a Tax-Free Savings Account, assuming you've never contributed or withdrawn.</p>
+  </div>
+
+  <div class="ledger">
+    <div class="ledger-inner">
+      <div class="field">
+        <div>
+          <label for="age">Your age</label>
+          <span class="hint">as of 2026</span>
+        </div>
+        <div class="age-input-wrap">
+          <input type="number" id="age" min="0" max="110" placeholder="—" inputmode="numeric">
+          <span>years</span>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <input type="checkbox" id="notResident">
+        <label for="notResident">I wasn't a Canadian resident for all of those years</label>
+      </div>
+
+      <div class="field" id="residencyField" style="display:none;">
+        <div>
+          <label for="residencyYear">Became a resident in</label>
+          <span class="hint">the year you moved to / returned to Canada</span>
+        </div>
+        <div class="age-input-wrap">
+          <input type="number" id="residencyYear" min="1950" max="2026" placeholder="—" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+
+    <div class="result" id="result">
+      <p class="total-label">Lifetime contribution room</p>
+      <p class="total" id="totalDisplay">Enter your age above</p>
+      <p class="note" id="noteText"></p>
+      <button class="breakdown-toggle" id="breakdownToggle" style="display:none;">Show year-by-year breakdown</button>
+      <div class="breakdown" id="breakdown"></div>
+    </div>
+
+    <div class="footnote">
+      TFSA limits by year: $5,000 (2009–12), $5,500 (2013–14), $10,000 (2015), $5,500 (2016–18), $6,000 (2019–22), $6,500 (2023), $7,000 (2024–26). Per CRA rules, room only accrues for years you're both 18+ and a Canadian resident — non-resident years don't add room, even after 18. This is an estimate, not tax advice — your real room also depends on any past contributions or withdrawals, which the CRA tracks on your account.
+    </div>
+  </div>
+</div>
+
+<script>
+  const CURRENT_YEAR = 2026;
+  const LIMITS = {
+    2009: 5000, 2010: 5000, 2011: 5000, 2012: 5000,
+    2013: 5500, 2014: 5500,
+    2015: 10000,
+    2016: 5500, 2017: 5500, 2018: 5500,
+    2019: 6000, 2020: 6000, 2021: 6000, 2022: 6000,
+    2023: 6500,
+    2024: 7000, 2025: 7000, 2026: 7000
+  };
+
+  const ageInput = document.getElementById('age');
+  const totalDisplay = document.getElementById('totalDisplay');
+  const noteText = document.getElementById('noteText');
+  const breakdownToggle = document.getElementById('breakdownToggle');
+  const breakdown = document.getElementById('breakdown');
+  const notResident = document.getElementById('notResident');
+  const residencyField = document.getElementById('residencyField');
+  const residencyYearInput = document.getElementById('residencyYear');
+
+  notResident.addEventListener('change', () => {
+    residencyField.style.display = notResident.checked ? 'flex' : 'none';
+    compute();
+  });
+  residencyYearInput.addEventListener('input', compute);
+
+  function formatMoney(n) {
+    return '$' + n.toLocaleString('en-CA');
+  }
+
+  function compute() {
+    const age = parseInt(ageInput.value, 10);
+    breakdown.classList.remove('open');
+    breakdownToggle.textContent = 'Show year-by-year breakdown';
+
+    if (isNaN(age) || ageInput.value === '') {
+      totalDisplay.textContent = 'Enter your age above';
+      noteText.textContent = '';
+      breakdownToggle.style.display = 'none';
+      breakdown.innerHTML = '';
+      return;
+    }
+
+    if (age < 0 || age > 110) {
+      totalDisplay.textContent = 'That age looks off';
+      noteText.textContent = 'Try a number between 0 and 110.';
+      breakdownToggle.style.display = 'none';
+      breakdown.innerHTML = '';
+      return;
+    }
+
+    const birthYear = CURRENT_YEAR - age;
+    const yearTurned18 = birthYear + 18;
+
+    if (yearTurned18 > CURRENT_YEAR) {
+      totalDisplay.textContent = formatMoney(0);
+      const yearsUntil = yearTurned18 - CURRENT_YEAR;
+      noteText.textContent = `You're not eligible yet — TFSA room starts building the year you turn 18, in ${yearTurned18} (${yearsUntil} year${yearsUntil === 1 ? '' : 's'} from now).`;
+      breakdownToggle.style.display = 'none';
+      breakdown.innerHTML = '';
+      return;
+    }
+
+    // CRA rule: room only accrues for years you are both 18+ and a Canadian resident.
+    let residencyYear = null;
+    if (notResident.checked) {
+      residencyYear = parseInt(residencyYearInput.value, 10);
+      if (residencyYearInput.value === '' || isNaN(residencyYear)) {
+        totalDisplay.textContent = 'Enter the year you became a resident';
+        noteText.textContent = '';
+        breakdownToggle.style.display = 'none';
+        breakdown.innerHTML = '';
+        return;
+      }
+      if (residencyYear > CURRENT_YEAR) {
+        totalDisplay.textContent = formatMoney(0);
+        noteText.textContent = `That year is in the future — you'd have no room yet.`;
+        breakdownToggle.style.display = 'none';
+        breakdown.innerHTML = '';
+        return;
+      }
+    }
+
+    const startYear = residencyYear
+      ? Math.max(2009, yearTurned18, residencyYear)
+      : Math.max(2009, yearTurned18);
+
+    let total = 0;
+    const rows = [];
+    for (let y = startYear; y <= CURRENT_YEAR; y++) {
+      total += LIMITS[y];
+      rows.push({ year: y, amount: LIMITS[y] });
+    }
+
+    totalDisplay.textContent = formatMoney(total);
+
+    if (residencyYear && residencyYear > Math.max(2009, yearTurned18)) {
+      noteText.textContent = `Based on accumulating room from ${startYear} (the year you became a Canadian resident) through ${CURRENT_YEAR}. No room accrues for years spent as a non-resident, even after age 18.`;
+    } else if (yearTurned18 <= 2009) {
+      noteText.textContent = `Based on accumulating room from 2009 (when the TFSA began) through ${CURRENT_YEAR}.`;
+    } else {
+      noteText.textContent = `Based on accumulating room from ${yearTurned18} (the year you turned 18) through ${CURRENT_YEAR}.`;
+    }
+
+    breakdownToggle.style.display = 'inline-block';
+    breakdown.innerHTML = rows
+      .slice()
+      .reverse()
+      .map(r => `<div class="breakdown-row"><span class="yr">${r.year}</span><span>${formatMoney(r.amount)}</span></div>`)
+      .join('');
+  }
+
+  ageInput.addEventListener('input', compute);
+  breakdownToggle.addEventListener('click', () => {
+    breakdown.classList.toggle('open');
+    breakdownToggle.textContent = breakdown.classList.contains('open')
+      ? 'Hide year-by-year breakdown'
+      : 'Show year-by-year breakdown';
+  });
+</script>
+</body>
+</html>
